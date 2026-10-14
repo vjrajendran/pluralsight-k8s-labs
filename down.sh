@@ -9,6 +9,7 @@ set -euo pipefail
 source "$(dirname "$0")/lib.sh"
 
 select_labs "$@"
+lock_labs
 init_terraform
 
 for lab in "${LABS[@]}"; do
