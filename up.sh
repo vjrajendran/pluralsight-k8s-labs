@@ -122,6 +122,7 @@ deploy_lab() {
 }
 
 select_labs "$@"
+lock_labs
 load_users
 init_terraform
 

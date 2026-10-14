@@ -56,6 +56,19 @@ tf() {
     terraform -chdir="$TF_DIR" "$@"
 }
 
+# One up.sh/down.sh per lab at a time - two would fight over its state and log
+lock_labs() {
+    local lab fd
+    mkdir -p "$RUN_DIR"
+    for lab in "${LABS[@]}"; do
+        exec {fd}>"$RUN_DIR/$lab.lock"
+        if ! flock -n "$fd"; then
+            echo "$lab is already being built or destroyed by another up.sh/down.sh - wait for it to finish"
+            exit 1
+        fi
+    done
+}
+
 init_terraform() {
     mkdir -p "$RUN_DIR"
     tf init -input=false >/dev/null
